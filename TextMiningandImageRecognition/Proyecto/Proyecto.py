@@ -20,8 +20,13 @@ class Ui_MainWindow(object):
         self.dimensions = self.capture.read()[1].shape[1::-1]
         
         # Define the codec and create VideoWriter object
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        self.out = cv2.VideoWriter('output.avi',fourcc, 20.0, (640,480))
+        self.fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        
+        # count variable 
+        self.count = 0
+        
+        # start flag 
+        self.start = False
         
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -33,6 +38,7 @@ class Ui_MainWindow(object):
         self.playButton.setIconSize(QtCore.QSize(32, 32))
         self.playButton.setObjectName("playButton")
         self.playButton.clicked.connect(self.clickedPlay)
+        
         self.stopButton = QtWidgets.QPushButton(self.centralwidget)
         self.stopButton.setGeometry(QtCore.QRect(390, 570, 121, 71))
         icon1 = QtGui.QIcon()
@@ -41,6 +47,7 @@ class Ui_MainWindow(object):
         self.stopButton.setIconSize(QtCore.QSize(32, 32))
         self.stopButton.setObjectName("stopButton")
         self.stopButton.clicked.connect(self.clickedStop)
+        self.stopButton.setEnabled(False)
         
         scene = QtWidgets.QGraphicsScene(self.centralwidget)
         pixmap = QtGui.QPixmap(*self.dimensions)
@@ -55,34 +62,47 @@ class Ui_MainWindow(object):
         self.timer.setInterval(int(1000/30))
         self.timer.timeout.connect(self.get_frame)
         
+        # creating a timer object 
+        self.timerDuracion = QtCore.QTimer(self.centralwidget) 
+  
+        # adding action to timer 
+        self.timerDuracion.timeout.connect(self.showTime) 
+  
+        # update the timer every tenth second 
+        self.timerDuracion.start(100)
+        
         self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(370, 730, 121, 16))
+        self.label.setGeometry(QtCore.QRect(370, 740, 121, 16))
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(370, 670, 131, 16))
+        self.label_2.setGeometry(QtCore.QRect(360, 680, 131, 16))
         self.label_2.setObjectName("label_2")
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
-        self.label_3.setGeometry(QtCore.QRect(370, 700, 131, 16))
+        self.label_3.setGeometry(QtCore.QRect(360, 710, 131, 16))
         self.label_3.setObjectName("label_3")
         self.conMascarilla = QtWidgets.QLabel(self.centralwidget)
-        self.conMascarilla.setGeometry(QtCore.QRect(400, 670, 47, 13))
-        self.conMascarilla.setText("")
+        self.conMascarilla.setGeometry(QtCore.QRect(510, 680, 47, 13))
+        self.conMascarilla.setText("0")
         self.conMascarilla.setObjectName("conMascarilla")
         self.sinMascarilla = QtWidgets.QLabel(self.centralwidget)
-        self.sinMascarilla.setGeometry(QtCore.QRect(390, 700, 47, 13))
-        self.sinMascarilla.setText("")
+        self.sinMascarilla.setGeometry(QtCore.QRect(510, 710, 47, 13))
+        self.sinMascarilla.setText("0")
         self.sinMascarilla.setObjectName("sinMascarilla")
         self.total = QtWidgets.QLabel(self.centralwidget)
-        self.total.setGeometry(QtCore.QRect(390, 730, 47, 13))
-        self.total.setText("")
+        self.total.setGeometry(QtCore.QRect(510, 740, 47, 13))
+        self.total.setText("0")
         self.total.setObjectName("total")
+        
         self.reiniciarButton = QtWidgets.QPushButton(self.centralwidget)
         self.reiniciarButton.setGeometry(QtCore.QRect(530, 570, 121, 71))
+        self.reiniciarButton.setEnabled(False)
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap("reiniciar.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.reiniciarButton.setIcon(icon2)
         self.reiniciarButton.setIconSize(QtCore.QSize(32, 32))
         self.reiniciarButton.setObjectName("reiniciarButton")
+        self.reiniciarButton.clicked.connect(self.clickedReiniciar)
+        
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1024, 21))
@@ -106,11 +126,44 @@ class Ui_MainWindow(object):
         self.reiniciarButton.setText(_translate("MainWindow", "Reiniciar"))
         
     def clickedPlay(self):
+        self.stopButton.setEnabled(True)
+        self.playButton.setEnabled(False)
+        self.out = cv2.VideoWriter('output.avi',self.fourcc, 20.0, (640,480))
         self.timer.start()
+        # making flag true 
+        self.start = True
+  
+        # count = 0 
+        #if self.count == 0: 
+        #    self.start = False
         
     def clickedStop(self):
+        self.stopButton.setEnabled(False)
+        self.reiniciarButton.setEnabled(True)
         self.out.release()
         self.timer.stop()
+        # making flag false 
+        self.start = False
+        
+    def clickedReiniciar(self):
+        self.reiniciarButton.setEnabled(False)
+        self.playButton.setEnabled(True)
+        scene = QtWidgets.QGraphicsScene(self.centralwidget)
+        pixmap = QtGui.QPixmap(*self.dimensions)
+        self.pixmapItem = scene.addPixmap(pixmap)
+        self.graphicsView.setScene(scene)
+        
+         # making flag false 
+        self.start = False
+  
+        # setting count value to 0 
+        self.count = 0
+  
+        # setting label text 
+        self.total.setText("0")
+        self.conMascarilla.setText("0")
+        self.sinMascarilla.setText("0")
+        
     
     def get_frame(self):
         _, frame = self.capture.read()
@@ -118,6 +171,30 @@ class Ui_MainWindow(object):
         image = QtGui.QImage(frame, *self.dimensions, QtGui.QImage.Format_RGB888).rgbSwapped()
         pixmap = QtGui.QPixmap.fromImage(image)
         self.pixmapItem.setPixmap(pixmap)
+            
+    # method called by timer 
+    def showTime(self): 
+  
+        # checking if flag is true 
+        if self.start: 
+            # incrementing the counter 
+            self.count += 1
+  
+            # timer is completed 
+            if self.count == 0: 
+  
+                # making flag false 
+                self.start = False
+  
+                # setting text to the label 
+                self.total.setText("Completed !!!! ") 
+  
+        if self.start: 
+            # getting text from count 
+            text = str(self.count / 10) + " s"
+  
+            # showing text 
+            self.total.setText(text) 
 
 if __name__ == "__main__":
     import sys

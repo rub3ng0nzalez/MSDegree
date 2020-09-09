@@ -77,7 +77,7 @@
     <property name="geometry">
      <rect>
       <x>370</x>
-      <y>730</y>
+      <y>740</y>
       <width>121</width>
       <height>16</height>
      </rect>
@@ -89,8 +89,8 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>370</x>
-      <y>670</y>
+      <x>360</x>
+      <y>680</y>
       <width>131</width>
       <height>16</height>
      </rect>
@@ -102,8 +102,8 @@
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>370</x>
-      <y>700</y>
+      <x>360</x>
+      <y>710</y>
       <width>131</width>
       <height>16</height>
      </rect>
@@ -115,40 +115,40 @@
    <widget class="QLabel" name="conMascarilla">
     <property name="geometry">
      <rect>
-      <x>400</x>
-      <y>670</y>
+      <x>510</x>
+      <y>680</y>
       <width>47</width>
       <height>13</height>
      </rect>
     </property>
     <property name="text">
-     <string/>
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLabel" name="sinMascarilla">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>700</y>
+      <x>510</x>
+      <y>710</y>
       <width>47</width>
       <height>13</height>
      </rect>
     </property>
     <property name="text">
-     <string/>
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLabel" name="total">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>730</y>
+      <x>510</x>
+      <y>740</y>
       <width>47</width>
       <height>13</height>
      </rect>
     </property>
     <property name="text">
-     <string/>
+     <string>0</string>
     </property>
    </widget>
    <widget class="QPushButton" name="reiniciarButton">
