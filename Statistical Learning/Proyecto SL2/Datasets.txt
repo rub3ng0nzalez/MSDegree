@@ -1,0 +1,13 @@
+Datasets a usar para el proyecto:
+
+MLP:
+Se usara una red neuronal para resolver un problema de regresion
+https://archive.ics.uci.edu/ml/datasets/Combined+Cycle+Power+Plant
+
+CNN:
+Clasificación de tipo de basura según fotografía
+https://www.kaggle.com/asdasdasasdas/garbage-classification
+
+RNN:
+Sentiment analysis de opiniones de películas
+http://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz
