@@ -12,7 +12,7 @@ shinyServer(function(input, output) {
     
     
     
-    puntos <- reactive({
+    click_points <- reactive({
         
        
         
@@ -27,11 +27,10 @@ shinyServer(function(input, output) {
         
         
         
-        if(!is.null(input$click_plot_tarea$x)){
-            df<-nearPoints(mtcars,input$click_plot_tarea,xvar='wt',yvar='mpg')
+        if(!is.null(input$click_plot_lab2$x)){
+            df<-nearPoints(mtcars,input$click_plot_lab2,xvar='wt',yvar='mpg')
             out <- df %>% 
                 select(wt,mpg)
-            browser()
             if (acumula ==0)
             {
                 out_click <<- out
@@ -44,16 +43,16 @@ shinyServer(function(input, output) {
             acumula <<- acumula + 1
             return(out_click)
         }
-        if(!is.null(input$hover_plot_tarea$x)){
-            df<-nearPoints(mtcars,input$hover_plot_tarea,xvar='wt',yvar='mpg')
+        if(!is.null(input$hover_plot_lab2$x)){
+            df<-nearPoints(mtcars,input$hover_plot_lab2,xvar='wt',yvar='mpg')
             out <- df %>% 
                 select(wt,mpg)
             out_hover <<- out
             return(out_hover)
         }
         
-        if(!is.null(input$dblclck_plot_tarea$x)){
-            df<-nearPoints(mtcars,input$dblclck_plot_tarea,xvar='wt',yvar='mpg')
+        if(!is.null(input$dblclck_plot_lab2$x)){
+            df<-nearPoints(mtcars,input$dblclck_plot_lab2,xvar='wt',yvar='mpg')
             out <- df %>% 
                 select(wt,mpg)
             out_click <<- setdiff(out_click,out)
@@ -61,8 +60,8 @@ shinyServer(function(input, output) {
             return(out_click)
         }
         
-        if(!is.null(input$brush_plot_tarea)){
-            df<-brushedPoints(mtcars,input$brush_plot_tarea,xvar='wt',yvar='mpg')
+        if(!is.null(input$brush_plot_lab2)){
+            df<-brushedPoints(mtcars,input$brush_plot_lab2,xvar='wt',yvar='mpg')
             out <- df %>% 
                 select(wt,mpg)
             
@@ -89,17 +88,17 @@ shinyServer(function(input, output) {
     click_table <- reactive({
     
         
-        input$click_plot_tarea$x
-        input$dblclck_plot_tarea$x
-        input$brush_plot_tarea
-        input$hover_plot_tarea$x
+        input$click_plot_lab2$x
+        input$dblclck_plot_lab2$x
+        input$brush_plot_lab2
+        input$hover_plot_lab2$x
         
     })
     
     
-    output$plot_tarea <- renderPlot({
+    output$plot_lab2 <- renderPlot({
         plot(mtcars$wt,mtcars$mpg,xlab="wt",ylab="Millas por Galon")
-        puntos()
+        click_points()
         
     })
     
