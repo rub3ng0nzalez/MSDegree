@@ -10,7 +10,7 @@
 library(shiny)
 library("RMySQL")
 library(DT)
-library(dplyr)
+library("dplyr")
 library(ggplot2)
 library(shinydashboard)
 
@@ -28,9 +28,10 @@ shinyServer(function(input, output, session) {
     parafiltros$video_id <- paste0("<a href='https://www.youtube.com/watch?v=", parafiltros$video_id ,
                                    "' target='_blank'>Ver video</a>")
     
+    parafiltros$published_date <- parafiltros$published_date %>% as.Date()
     
-    
-    RV <- reactiveValues(data = parafiltros)
+    RV <- reactiveValues(data = NULL)
+    RV_datos <- reactiveValues(data = NULL)
     
     nombresColumnas <-function(nombre) {
         salida = ''
@@ -66,12 +67,44 @@ shinyServer(function(input, output, session) {
     
     #-------------------tab de Estadisticas generales
     output$summ_vistas <- renderValueBox({
-        valueBox(sum(parafiltros$viewCount),"Vistas",
-                 icon = icon("eye"),
+        valueBox(formatC(sum(parafiltros$viewCount), format = "d", big.mark = "," ),
+                 "Vistas",
+            icon = icon("eye"),
+            color = "blue"
+        )
+    })
+    
+    output$summ_likes <- renderValueBox({
+        valueBox(formatC(sum(parafiltros$likeCount), format = "d", big.mark = "," ),
+                 "Likes",
+                 icon = icon("thumbs-up"),
                  color = "blue"
         )
     })
     
+    output$summ_dislikes <- renderValueBox({
+        valueBox(formatC(sum(parafiltros$dislikeCount), format = "d", big.mark = "," ),
+                 "Dislikes",
+                 icon = icon("thumbs-down"),
+                 color = "blue"
+        )
+    })
+    
+    output$summ_favorites <- renderValueBox({
+        valueBox(formatC(sum(parafiltros$favoriteCount), format = "d", big.mark = "," ),
+                 "Favoritos",
+                 icon = icon("heart"),
+                 color = "blue"
+        )
+    })
+    
+    output$summ_comments <- renderValueBox({
+        valueBox(formatC(sum(parafiltros$commentCount), format = "d", big.mark = "," ),
+                 "Comentarios",
+                 icon = icon("comments"),
+                 color = "blue"
+        )
+    })
     #-----------------tab de Estadisticas por indicador-----------------
     
     output$min_text <- renderText({
@@ -80,7 +113,7 @@ shinyServer(function(input, output, session) {
     
     output$min <- renderText({
         Columna <- parafiltros %>% select(nombresColumnas(input$stats))
-        min(Columna)
+        formatC( min(Columna), format = "d", big.mark = "," )
         
     })
     
@@ -90,7 +123,7 @@ shinyServer(function(input, output, session) {
     
     output$max <- renderText({
         Columna <- parafiltros %>% select(nombresColumnas(input$stats))
-        max(Columna)
+        formatC(max(Columna), format = "d", big.mark = "," )
         
     })
     
@@ -100,7 +133,7 @@ shinyServer(function(input, output, session) {
     
     output$media <- renderText({
         Columna <- parafiltros %>% select(nombresColumnas(input$stats))
-        round(mean(Columna[[1]]), digits = 0)
+        formatC(round(mean(Columna[[1]]), digits = 0), format = "d", big.mark = "," )
         
     })
     
@@ -110,38 +143,50 @@ shinyServer(function(input, output, session) {
     
     output$mediana <- renderText({
         Columna <- parafiltros %>% select(nombresColumnas(input$stats))
-        median(Columna[[1]])
+        formatC(median(Columna[[1]]), format = "d", big.mark = "," )
         
     })
     
     output$plot_hist <- renderPlot({
         Columna <- parafiltros %>% select(nombresColumnas(input$stats))
         hist(x = Columna[[1]], main =paste0("Histograma de distribución ",input$stats), 
-             xlab=input$stats, col = "chocolate")
+             xlab=input$stats, col = "blue", border = "black")
     })
     
     
-    #------------------Tab de datos Top
+    #------------------Tab de datos Top------------------------------------------
     observeEvent(input$buscar, {
-        #browser()
         RV$data <- parafiltros
-        #browser()
         if (input$masomenos =="BOTTOM")
             RV$data <- RV$data %>% slice_min(filtrosColumnas(input$indicador), n = as.numeric(input$cantidad))
         else
             RV$data <- RV$data %>% slice_max(filtrosColumnas(input$indicador), n = as.numeric(input$cantidad))
-        
-        #RV$data <- RV$data %>% arrange(RV$data$published_date)
-        #browser()
         
     })
     
     output$filtroTop <-renderDataTable({
         RV$data %>% datatable(escape = FALSE, options = list(searching = FALSE, ordering = FALSE))
     })
-    #------------------Tab de datos
-    output$datos <-renderDataTable({
-        parafiltros %>% datatable(escape = FALSE)
+    
+    #------------------Tab de datos------------------------------------------
+    observeEvent(input$buscar_datos, {
+        RV_datos$data <- parafiltros
+        #browser()
+        RV_datos$data <- filter(RV_datos$data, between(RV_datos$data$published_date, left = as.Date(input$date_range[1]), right = as.Date(input$date_range[2])))
+        
     })
     
+    fecha_minima <- as.Date(min(parafiltros$published_date))
+    fecha_maxima <- as.Date(max(parafiltros$published_date))
+    
+    observe({
+        updateDateRangeInput(session, "date_range", 
+                             min = fecha_minima, start = fecha_minima,
+                             max = fecha_maxima, end = fecha_maxima)
+    })
+    
+    output$datos <-renderDataTable({
+        RV_datos$data %>% datatable(escape = FALSE, options = list(searching = FALSE))
+    })
+
 })
