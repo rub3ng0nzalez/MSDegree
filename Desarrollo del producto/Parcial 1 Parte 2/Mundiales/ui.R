@@ -10,7 +10,7 @@ library(shiny)
 
 
 sidebar <- dashboardSidebar(
-    sidebarMenu(
+    sidebarMenu(id ="opciones",
         menuItem("General stats", tabName = "generalStats", icon = icon("globe-americas", lib = "font-awesome")),
         menuItem("Info per team", tabName = "infoXteam", icon = icon("flag", lib = "font-awesome") ),
         menuItem("Info per WorldCup", tabName = "infoXwc", icon = icon("trophy", lib = "font-awesome") ),
@@ -21,7 +21,7 @@ sidebar <- dashboardSidebar(
 body <- dashboardBody(
     tabItems(
         tabItem(tabName = "generalStats",
-                h2("Estadisticas generales de la copa del mundo"),
+                h2("Estadísticas generales de la copa del mundo"),
                 h4(""),
                 fluidRow(
                     # A static infoBox
@@ -31,6 +31,11 @@ body <- dashboardBody(
                     infoBoxOutput("totalGoles"),
                     infoBoxOutput("totalJuegos")
                 ),
+                fluidRow(
+                    infoBoxOutput("totalAsistentes"),
+                    infoBoxOutput("maximoGanadorMundiales"),
+                    infoBoxOutput("masAficionados")
+                ),
                 #imageOutput('prueba'),
                 dataTableOutput('datosGenerales')
         ),
@@ -39,7 +44,29 @@ body <- dashboardBody(
                 h2("Statistics per national teams")
         ),
         tabItem(tabName = "infoXwc",
-                h2("Statistics per World cup")
+                h2("Estadísticas por copa mundial"),
+                fluidRow(
+                    box(title = "Busqueda", width = 4, 
+                        solidHeader = TRUE, status = "primary",
+                        selectInput("eligeMundial", "Seleccione un año de mundial:",
+                                    choices = NULL, selected = NULL),
+                        textOutput("mundialElegido"),
+                        imageOutput('imagenMundialElegido')
+                    ),
+                    infoBoxOutput("Wc.Campeon"),
+                    infoBoxOutput("Wc.Second"),
+                    infoBoxOutput("Wc.Third"),
+                    infoBoxOutput("Wc.Fourth"),
+                    infoBoxOutput("Wc.Matches"),
+                    infoBoxOutput("Wc.Goles"),
+                    infoBoxOutput("Wc.Teams"),
+                    infoBoxOutput("Wc.Fans")
+                ),
+                fluidRow(
+                        tabBox(id = "torneo", title = "Torneo", width = 12)
+                )
+                
+                
         ),
         tabItem(tabName = "about",
                 h2("Parcial 1 - Fase 2"),
