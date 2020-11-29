@@ -8,29 +8,46 @@ library(shinydashboard)
 library(shiny)
 # Define UI for application that draws a histogram
 
-#b64 <- base64enc::dataURI(file="ARG.png", mime="www")
 
 sidebar <- dashboardSidebar(
     sidebarMenu(
         menuItem("General stats", tabName = "generalStats", icon = icon("globe-americas", lib = "font-awesome")),
         menuItem("Info per team", tabName = "infoXteam", icon = icon("flag", lib = "font-awesome") ),
-        menuItem("Info per WorldCup", tabName = "infoXwc", icon = icon("flag", lib = "font-awesome") )
+        menuItem("Info per WorldCup", tabName = "infoXwc", icon = icon("trophy", lib = "font-awesome") ),
+        menuItem("About", tabName = "about", icon = icon("user-graduate", lib = "font-awesome") )
     )
 )
 
 body <- dashboardBody(
     tabItems(
         tabItem(tabName = "generalStats",
-                h2("General statistics for the World cup"),
-                #img(src=b64) ,
-                #img(src="www/ARG.jpg"),
-                imageOutput('prueba'),
+                h2("Estadisticas generales de la copa del mundo"),
+                h4(""),
+                fluidRow(
+                    # A static infoBox
+                    infoBox("Sin mundial", 
+                            "En los años 1942 y 1946 no se jugo mundial debido a la segunda guerra mundial", 
+                            icon = icon("fighter-jet", lib = "font-awesome"), fill = TRUE),
+                    infoBoxOutput("totalGoles"),
+                    infoBoxOutput("totalJuegos")
+                ),
+                #imageOutput('prueba'),
                 dataTableOutput('datosGenerales')
         ),
         
         tabItem(tabName = "infoXteam",
                 h2("Statistics per national teams")
+        ),
+        tabItem(tabName = "infoXwc",
+                h2("Statistics per World cup")
+        ),
+        tabItem(tabName = "about",
+                h2("Parcial 1 - Fase 2"),
+                h4(" "),
+                h4('Ruben Gonzalez - 20003314'),
+                h4('Vidal Baez - 20002076'),
         )
+        
     )
 )
 

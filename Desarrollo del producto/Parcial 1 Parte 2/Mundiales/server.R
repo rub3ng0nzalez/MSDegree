@@ -26,26 +26,26 @@ salidaGeneral <- infoGeneral
 #                                 salidaGeneral$Winner,
 #                                 ' </img>')
 
-salidaGeneral$Winner <- paste0('<img src="ARG',
-                                  #salidaGeneral$Winner.Ab,
-                                '.jpg" alt ="alternative text"> ',
-                                salidaGeneral$Winner,
-                                ' </img>')
+salidaGeneral$Winner <- paste0('<img src="',
+                               salidaGeneral$Winner.Ab,
+                               '.jpg" > ',
+                               salidaGeneral$Winner,
+                               ' </img>')
 
 
-salidaGeneral$Second <- paste0('<img src="http://www.allcompetitions.com/Flags/',
+salidaGeneral$Second <- paste0('<img src="',
                                salidaGeneral$Second.Ab,
                                '.jpg"> ',
                                salidaGeneral$Second,
                                ' </img>')
 
-salidaGeneral$Third <- paste0('<img src="http://www.allcompetitions.com/Flags/',
-                               salidaGeneral$Third.Ab,
-                               '.jpg"> ',
-                               salidaGeneral$Third,
-                               ' </img>')
+salidaGeneral$Third <- paste0('<img src="',
+                              salidaGeneral$Third.Ab,
+                              '.jpg"> ',
+                              salidaGeneral$Third,
+                              ' </img>')
 
-salidaGeneral$Fourth <- paste0('<img src="http://www.allcompetitions.com/Flags/',
+salidaGeneral$Fourth <- paste0('<img src="',
                                salidaGeneral$Fourth.Ab,
                                '.jpg"> ',
                                salidaGeneral$Fourth,
@@ -57,16 +57,36 @@ salidaGeneral <- salidaGeneral %>% select(-c("Winner.Ab","Second.Ab","Third.Ab",
 # Define server logic required to draw a histogram
 shinyServer(function(input, output, session) {
     
-    output$prueba <- renderImage({
-        list(
-            src = "www/ARG.jpg",
-            alt = "Texto alterno"
+    # output$prueba <- renderImage({
+    #     list(
+    #         src = "www/ARG.jpg",
+    #         alt = "Texto alterno"
+    #     )
+    # })
+    
+    output$totalGoles <- renderInfoBox({
+        infoBox(
+            "Total goles anotados", 
+            formatC(sum(salidaGeneral$GoalsScored), format = "d", big.mark = "," ), 
+            icon = icon("futbol"),
+            color = "purple", 
+            fill = TRUE
+        )
+    })
+    
+    output$totalJuegos <- renderInfoBox({
+        infoBox(
+            "Total juegos realizados", 
+            formatC(sum(salidaGeneral$MatchesPlayed), format = "d", big.mark = "," ), 
+            icon = icon("futbol"),
+            color = "green", 
+            fill = TRUE
         )
     })
     
     output$datosGenerales <- renderDataTable({
         
-        salidaGeneral %>% datatable( escape = FALSE, options = list(searching = FALSE, ordering = TRUE, pageLength = 25, dom = 't'))
+        salidaGeneral %>% datatable( escape = FALSE, options = list(searching = FALSE, ordering = TRUE, pageLength = 25))
     }) 
-
+    
 })
