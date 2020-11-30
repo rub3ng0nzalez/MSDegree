@@ -1,0 +1,84 @@
+Country,Code,Ganados,Perdidos,Empates
+Algeria,ALG,4,9,2
+Angola,ANG,2,3,0
+Argentina,ARG,54,32,5
+Australia,AUS,4,10,1
+Austria,AUT,15,16,1
+Belgium,BEL,21,25,3
+Bolivia,BOL,1,6,0
+Brazil,BRA,75,23,14
+Bulgaria,BUL,8,20,3
+Cameroon,CMR,9,17,2
+Canada,CAN,0,3,0
+Chile,CHI,16,20,3
+China PR,CHN,0,3,0
+Colombia,COL,10,12,0
+Costa Rica,CRC,7,8,4
+Croatia,CRO,8,8,1
+Cuba,CUB,1,1,1
+Czech Republic,CZE,1,2,0
+Czechoslovakia,TCH,15,18,1
+C�te d'Ivoire,CIV,3,5,1
+Denmark,DEN,9,7,1
+Dutch East Indies,INH,0,1,0
+Ecuador,ECU,4,5,1
+Egypt,EGY,2,4,0
+El Salvador,SLV,0,6,0
+England,ENG,35,25,11
+France,FRA,35,26,6
+German DR,GDR,4,4,0
+Germany,GER,35,9,5
+Germany FR,FRG,37,13,13
+Ghana,GHA,6,7,1
+Greece,GRE,5,9,0
+Haiti,HAI,0,3,0
+Honduras,HON,2,8,1
+Hungary,HUN,16,15,2
+IR Iran,IRN,1,5,1
+Iran,IRN,1,4,1
+Iraq,IRQ,0,3,0
+Israel,ISR,2,3,0
+Italy,ITA,52,24,14
+Jamaica,JAM,1,2,0
+Japan,JPN,5,10,3
+Korea DPR,PRK,1,5,1
+Korea Republic,KOR,11,23,3
+Kuwait,KUW,1,3,0
+Mexico,MEX,22,34,6
+Morocco,MAR,4,9,2
+Netherlands,NED,33,15,10
+New Zealand,NZL,2,5,1
+Nigeria,NGA,6,12,2
+Northern Ireland,NIR,8,10,0
+Norway,NOR,5,6,0
+Paraguay,PAR,11,14,6
+Peru,PER,6,10,1
+Poland,POL,18,14,2
+Portugal,POR,16,12,1
+Romania,ROU,11,11,2
+Russia,RUS,3,6,1
+Saudi Arabia,KSA,4,11,0
+Scotland,SCO,6,14,5
+Senegal,SEN,3,2,1
+Serbia,SRB,1,2,0
+Slovakia,SVK,2,3,0
+Slovenia,SVN,1,4,1
+South Africa,RSA,3,4,3
+Soviet Union,URS,18,13,3
+Spain,ESP,34,23,7
+Sweden,SWE,22,0,7
+Switzerland,SUI,14,0,3
+Togo,TOG,0,0,0
+Tunisia,TUN,3,0,2
+Turkey,TUR,6,0,0
+USA,USA,12,0,2
+Ukraine,UKR,3,0,0
+Uruguay,URU,25,0,7
+Wales,WAL,4,0,0
+Yugoslavia,YUG,21,0,3
+Zaire,ZAI,0,0,0
+"rn"">Bosnia and Herzegovina",BIH,1,2,0
+"rn"">Republic of Ireland",IRL,5,6,5
+"rn"">Serbia and Montenegro",SCG,0,3,0
+"rn"">Trinidad and Tobago",TRI,0,2,1
+"rn"">United Arab Emirates",UAE,0,3,0

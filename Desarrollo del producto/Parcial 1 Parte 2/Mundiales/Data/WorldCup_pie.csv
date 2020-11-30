@@ -1,0 +1,250 @@
+Country,Code,Attribute,Value
+France,FRA,Ganados,35
+France,FRA,Perdidos,26
+France,FRA,Empates,6
+USA,USA,Ganados,12
+USA,USA,Perdidos,0
+USA,USA,Empates,2
+Yugoslavia,YUG,Ganados,21
+Yugoslavia,YUG,Perdidos,0
+Yugoslavia,YUG,Empates,3
+Romania,ROU,Ganados,11
+Romania,ROU,Perdidos,11
+Romania,ROU,Empates,2
+Argentina,ARG,Ganados,54
+Argentina,ARG,Perdidos,32
+Argentina,ARG,Empates,5
+Chile,CHI,Ganados,16
+Chile,CHI,Perdidos,20
+Chile,CHI,Empates,3
+Uruguay,URU,Ganados,25
+Uruguay,URU,Perdidos,0
+Uruguay,URU,Empates,7
+Brazil,BRA,Ganados,75
+Brazil,BRA,Perdidos,23
+Brazil,BRA,Empates,14
+Paraguay,PAR,Ganados,11
+Paraguay,PAR,Perdidos,14
+Paraguay,PAR,Empates,6
+Austria,AUT,Ganados,15
+Austria,AUT,Perdidos,16
+Austria,AUT,Empates,1
+Hungary,HUN,Ganados,16
+Hungary,HUN,Perdidos,15
+Hungary,HUN,Empates,2
+Switzerland,SUI,Ganados,14
+Switzerland,SUI,Perdidos,0
+Switzerland,SUI,Empates,3
+Sweden,SWE,Ganados,22
+Sweden,SWE,Perdidos,0
+Sweden,SWE,Empates,7
+Germany,GER,Ganados,35
+Germany,GER,Perdidos,9
+Germany,GER,Empates,5
+Spain,ESP,Ganados,34
+Spain,ESP,Perdidos,23
+Spain,ESP,Empates,7
+Italy,ITA,Ganados,52
+Italy,ITA,Perdidos,24
+Italy,ITA,Empates,14
+Czechoslovakia,TCH,Ganados,15
+Czechoslovakia,TCH,Perdidos,18
+Czechoslovakia,TCH,Empates,1
+Cuba,CUB,Ganados,1
+Cuba,CUB,Perdidos,1
+Cuba,CUB,Empates,1
+England,ENG,Ganados,35
+England,ENG,Perdidos,25
+England,ENG,Empates,11
+Germany FR,FRG,Ganados,37
+Germany FR,FRG,Perdidos,13
+Germany FR,FRG,Empates,13
+Turkey,TUR,Ganados,6
+Turkey,TUR,Perdidos,0
+Turkey,TUR,Empates,0
+Soviet Union,URS,Ganados,18
+Soviet Union,URS,Perdidos,13
+Soviet Union,URS,Empates,3
+Northern Ireland,NIR,Ganados,8
+Northern Ireland,NIR,Perdidos,10
+Northern Ireland,NIR,Empates,0
+Mexico,MEX,Ganados,22
+Mexico,MEX,Perdidos,34
+Mexico,MEX,Empates,6
+Wales,WAL,Ganados,4
+Wales,WAL,Perdidos,0
+Wales,WAL,Empates,0
+Portugal,POR,Ganados,16
+Portugal,POR,Perdidos,12
+Portugal,POR,Empates,1
+Korea DPR,PRK,Ganados,1
+Korea DPR,PRK,Perdidos,5
+Korea DPR,PRK,Empates,1
+Peru,PER,Ganados,6
+Peru,PER,Perdidos,10
+Peru,PER,Empates,1
+Belgium,BEL,Ganados,21
+Belgium,BEL,Perdidos,25
+Belgium,BEL,Empates,3
+Bulgaria,BUL,Ganados,8
+Bulgaria,BUL,Perdidos,20
+Bulgaria,BUL,Empates,3
+German DR,GDR,Ganados,4
+German DR,GDR,Perdidos,4
+German DR,GDR,Empates,0
+Zaire,ZAI,Ganados,0
+Zaire,ZAI,Perdidos,0
+Zaire,ZAI,Empates,0
+Poland,POL,Ganados,18
+Poland,POL,Perdidos,14
+Poland,POL,Empates,2
+Australia,AUS,Ganados,4
+Australia,AUS,Perdidos,10
+Australia,AUS,Empates,1
+Scotland,SCO,Ganados,6
+Scotland,SCO,Perdidos,14
+Scotland,SCO,Empates,5
+Netherlands,NED,Ganados,33
+Netherlands,NED,Perdidos,15
+Netherlands,NED,Empates,10
+Haiti,HAI,Ganados,0
+Haiti,HAI,Perdidos,3
+Haiti,HAI,Empates,0
+Tunisia,TUN,Ganados,3
+Tunisia,TUN,Perdidos,0
+Tunisia,TUN,Empates,2
+Algeria,ALG,Ganados,4
+Algeria,ALG,Perdidos,9
+Algeria,ALG,Empates,2
+Honduras,HON,Ganados,2
+Honduras,HON,Perdidos,8
+Honduras,HON,Empates,1
+Canada,CAN,Ganados,0
+Canada,CAN,Perdidos,3
+Canada,CAN,Empates,0
+Morocco,MAR,Ganados,4
+Morocco,MAR,Perdidos,9
+Morocco,MAR,Empates,2
+Korea Republic,KOR,Ganados,11
+Korea Republic,KOR,Perdidos,23
+Korea Republic,KOR,Empates,3
+Iraq,IRQ,Ganados,0
+Iraq,IRQ,Perdidos,3
+Iraq,IRQ,Empates,0
+Denmark,DEN,Ganados,9
+Denmark,DEN,Perdidos,7
+Denmark,DEN,Empates,1
+"rn"">United Arab Emirates",UAE,Ganados,0
+"rn"">United Arab Emirates",UAE,Perdidos,3
+"rn"">United Arab Emirates",UAE,Empates,0
+Costa Rica,CRC,Ganados,7
+Costa Rica,CRC,Perdidos,8
+Costa Rica,CRC,Empates,4
+Cameroon,CMR,Ganados,9
+Cameroon,CMR,Perdidos,17
+Cameroon,CMR,Empates,2
+"rn"">Republic of Ireland",IRL,Ganados,5
+"rn"">Republic of Ireland",IRL,Perdidos,6
+"rn"">Republic of Ireland",IRL,Empates,5
+Colombia,COL,Ganados,10
+Colombia,COL,Perdidos,12
+Colombia,COL,Empates,0
+Norway,NOR,Ganados,5
+Norway,NOR,Perdidos,6
+Norway,NOR,Empates,0
+Nigeria,NGA,Ganados,6
+Nigeria,NGA,Perdidos,12
+Nigeria,NGA,Empates,2
+Saudi Arabia,KSA,Ganados,4
+Saudi Arabia,KSA,Perdidos,11
+Saudi Arabia,KSA,Empates,0
+Bolivia,BOL,Ganados,1
+Bolivia,BOL,Perdidos,6
+Bolivia,BOL,Empates,0
+Russia,RUS,Ganados,3
+Russia,RUS,Perdidos,6
+Russia,RUS,Empates,1
+Greece,GRE,Ganados,5
+Greece,GRE,Perdidos,9
+Greece,GRE,Empates,0
+Jamaica,JAM,Ganados,1
+Jamaica,JAM,Perdidos,2
+Jamaica,JAM,Empates,0
+South Africa,RSA,Ganados,3
+South Africa,RSA,Perdidos,4
+South Africa,RSA,Empates,3
+Japan,JPN,Ganados,5
+Japan,JPN,Perdidos,10
+Japan,JPN,Empates,3
+Croatia,CRO,Ganados,8
+Croatia,CRO,Perdidos,8
+Croatia,CRO,Empates,1
+China PR,CHN,Ganados,0
+China PR,CHN,Perdidos,3
+China PR,CHN,Empates,0
+Senegal,SEN,Ganados,3
+Senegal,SEN,Perdidos,2
+Senegal,SEN,Empates,1
+Slovenia,SVN,Ganados,1
+Slovenia,SVN,Perdidos,4
+Slovenia,SVN,Empates,1
+Ecuador,ECU,Ganados,4
+Ecuador,ECU,Perdidos,5
+Ecuador,ECU,Empates,1
+"rn"">Trinidad and Tobago",TRI,Ganados,0
+"rn"">Trinidad and Tobago",TRI,Perdidos,2
+"rn"">Trinidad and Tobago",TRI,Empates,1
+"rn"">Serbia and Montenegro",SCG,Ganados,0
+"rn"">Serbia and Montenegro",SCG,Perdidos,3
+"rn"">Serbia and Montenegro",SCG,Empates,0
+Angola,ANG,Ganados,2
+Angola,ANG,Perdidos,3
+Angola,ANG,Empates,0
+Czech Republic,CZE,Ganados,1
+Czech Republic,CZE,Perdidos,2
+Czech Republic,CZE,Empates,0
+Togo,TOG,Ganados,0
+Togo,TOG,Perdidos,0
+Togo,TOG,Empates,0
+Iran,IRN,Ganados,1
+Iran,IRN,Perdidos,4
+Iran,IRN,Empates,1
+C�te d'Ivoire,CIV,Ganados,3
+C�te d'Ivoire,CIV,Perdidos,5
+C�te d'Ivoire,CIV,Empates,1
+Ghana,GHA,Ganados,6
+Ghana,GHA,Perdidos,7
+Ghana,GHA,Empates,1
+Ukraine,UKR,Ganados,3
+Ukraine,UKR,Perdidos,0
+Ukraine,UKR,Empates,0
+Serbia,SRB,Ganados,1
+Serbia,SRB,Perdidos,2
+Serbia,SRB,Empates,0
+New Zealand,NZL,Ganados,2
+New Zealand,NZL,Perdidos,5
+New Zealand,NZL,Empates,1
+Slovakia,SVK,Ganados,2
+Slovakia,SVK,Perdidos,3
+Slovakia,SVK,Empates,0
+IR Iran,IRN,Ganados,1
+IR Iran,IRN,Perdidos,5
+IR Iran,IRN,Empates,1
+"rn"">Bosnia and Herzegovina",BIH,Ganados,1
+"rn"">Bosnia and Herzegovina",BIH,Perdidos,2
+"rn"">Bosnia and Herzegovina",BIH,Empates,0
+Egypt,EGY,Ganados,2
+Egypt,EGY,Perdidos,4
+Egypt,EGY,Empates,0
+Dutch East Indies,INH,Ganados,0
+Dutch East Indies,INH,Perdidos,1
+Dutch East Indies,INH,Empates,0
+Israel,ISR,Ganados,2
+Israel,ISR,Perdidos,3
+Israel,ISR,Empates,0
+El Salvador,SLV,Ganados,0
+El Salvador,SLV,Perdidos,6
+El Salvador,SLV,Empates,0
+Kuwait,KUW,Ganados,1
+Kuwait,KUW,Perdidos,3
+Kuwait,KUW,Empates,0
