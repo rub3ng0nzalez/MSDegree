@@ -5,8 +5,8 @@ account: rub3ng0nzalez
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3316971
-bundleId: 3919470
+bundleId: 3920695
 url: https://rub3ng0nzalez.shinyapps.io/Mundiales/
-when: 1606667797.22403
+when: 1606696903.03422
 asMultiple: FALSE
 asStatic: FALSE

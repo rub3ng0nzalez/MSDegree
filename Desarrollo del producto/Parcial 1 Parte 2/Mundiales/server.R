@@ -70,6 +70,10 @@ capturaTorneo <- NULL
 
 
 salidaGeneral <- salidaGeneral %>% select(-c("Country.Ab","Winner.Ab","Second.Ab","Third.Ab","Fourth.Ab"))
+
+infoElegido<-NULL
+infoElegidoMatches <-NULL
+
 # Define server logic required to draw a histogram
 shinyServer(function(input, output, session) {
     
@@ -88,85 +92,9 @@ shinyServer(function(input, output, session) {
                       inputId = 'eligeMundial',
                       choices = infoGeneral$Year)
     
-    observeEvent(input$eligeMundial,{
-        
-        infoElegido <- infoGeneral %>% filter(infoGeneral$Year == input$eligeMundial)
-        infoElegidoMatches <- infoMatches %>% filter(infoMatches$Year == input$eligeMundial)
-        
-        noTabs<-infoElegidoMatches$Stage %>% unique()
-        if (length(noTabs)>=1)
-        {
-            infoElegidoMatches$Home.Team.Name <- paste0('<img src="',
-                                                        infoElegidoMatches$Home.Team.Initials,
-                                                        '.jpg"> ',
-                                                        infoElegidoMatches$Home.Team.Name,
-                                                        ' </img>')
-            
-            infoElegidoMatches$Away.Team.Name <- paste0('<img src="',
-                                                        infoElegidoMatches$Away.Team.Initials,
-                                                        '.jpg"> ',
-                                                        infoElegidoMatches$Away.Team.Name,
-                                                        ' </img>')
-            
-            infoElegidoMatches$Attendance <- infoElegidoMatches$Attendance %>% formatC(format = "d", big.mark = "," )
-            
-            columns2hide <- match(c("Year","RoundID","MatchID",
-                                    "Home.Team.Initials","Away.Team.Initials",
-                                    "Stage","Half.time.Home.Goals", "Half.time.Away.Goals"), colnames(infoElegidoMatches))
-            #Limpiar el tabPanel
-            if(!is.null(capturaTorneo))
-            {
-                for (j in 1:length(capturaTorneo)){
-                    removeTab(inputId = "torneo", target = capturaTorneo[j], session = session)
-                }
-            }
-            
-            #Llenar con los nuevos stage
-            for (i in 1:length(noTabs))
-            {
-                
-                Wc.stage <- infoElegidoMatches %>% filter(infoElegidoMatches$Stage ==noTabs[i])
-                prependTab("torneo", session = session,
-                           tabPanel(title = noTabs[i], value = noTabs[i], target = noTabs[i],
-                                    Wc.stage %>% datatable(
-                                        escape = FALSE, colnames = c('Local' = 'Home.Team.Name',
-                                                                     'Visitante' = 'Away.Team.Name',
-                                                                     'Goles local' = 'Home.Team.Goals',
-                                                                     'Goles visitante' = 'Away.Team.Goals',
-                                                                     'Aficionados' = 'Attendance',
-                                                                     'Condiciones' = 'Win.conditions'),
-                                                           options = list(searching = FALSE, ordering = TRUE, 
-                                                                          pageLength = 25, dom = 't',
-                                                                          columnDefs = list(
-                                                                              list(
-                                                                                  visible = FALSE, targets = columns2hide
-                                                                              )
-                                                                          )
-                                                                          ),
-                                                           selection = list(mode = 'single',
-                                                                            target = 'cell'),
-                                        width = "100%", height = "100%"),
-                                    )
-                           )
-                capturaTorneo <<- noTabs
-            }
-            
-            updateTabItems(session = session, inputId = "torneo", selected = "Final")
-        }
-        
-        output$mundialElegido <- renderText({
-            paste0("Mundial de ",input$eligeMundial,
-                   " jugado en ", infoElegido$Country)
-             
-        })
-        
-        output$imagenMundialElegido <- renderImage({
-            list(
-                src = paste0("www/",infoElegido$Country.Ab,".jpg"),
-                width = "auto",
-                height = "auto", deleteFile = FALSE
-            )
-        })
+    observe({
+        infoElegido <<- infoGeneral %>% filter(infoGeneral$Year == input$eligeMundial)
+        infoElegidoMatches <<- infoMatches %>% filter(infoMatches$Year == input$eligeMundial)
         
         output$Wc.Campeon <- renderInfoBox({
             infoBox(
@@ -247,6 +175,89 @@ shinyServer(function(input, output, session) {
                 fill = FALSE
             )
         })
+    })
+    
+    
+    
+    observeEvent(input$eligeMundial,{
+        
+        
+        noTabs<-infoElegidoMatches$Stage %>% unique()
+        if (length(noTabs)>=1)
+        {
+            infoElegidoMatches$Home.Team.Name <- paste0('<img src="',
+                                                        infoElegidoMatches$Home.Team.Initials,
+                                                        '.jpg"> ',
+                                                        infoElegidoMatches$Home.Team.Name,
+                                                        ' </img>')
+            
+            infoElegidoMatches$Away.Team.Name <- paste0('<img src="',
+                                                        infoElegidoMatches$Away.Team.Initials,
+                                                        '.jpg"> ',
+                                                        infoElegidoMatches$Away.Team.Name,
+                                                        ' </img>')
+            
+            infoElegidoMatches$Attendance <- infoElegidoMatches$Attendance %>% formatC(format = "d", big.mark = "," )
+            
+            columns2hide <- match(c("Year","RoundID","MatchID",
+                                    "Home.Team.Initials","Away.Team.Initials",
+                                    "Stage","Half.time.Home.Goals", "Half.time.Away.Goals"), colnames(infoElegidoMatches))
+            #Limpiar el tabPanel
+            if(!is.null(capturaTorneo))
+            {
+                for (j in 1:length(capturaTorneo)){
+                    removeTab(inputId = "torneo", target = capturaTorneo[j], session = session)
+                }
+            }
+            
+            #Llenar con los nuevos stage
+            for (i in 1:length(noTabs))
+            {
+                
+                Wc.stage <- infoElegidoMatches %>% filter(infoElegidoMatches$Stage ==noTabs[i])
+                prependTab("torneo", session = session,
+                           tabPanel(title = noTabs[i], value = noTabs[i], target = noTabs[i],
+                                    Wc.stage %>% datatable(
+                                        escape = FALSE, colnames = c('Local' = 'Home.Team.Name',
+                                                                     'Visitante' = 'Away.Team.Name',
+                                                                     'Goles local' = 'Home.Team.Goals',
+                                                                     'Goles visitante' = 'Away.Team.Goals',
+                                                                     'Aficionados' = 'Attendance',
+                                                                     'Condiciones' = 'Win.conditions'),
+                                                           options = list(searching = FALSE, ordering = TRUE, 
+                                                                          pageLength = 25, dom = 't',
+                                                                          columnDefs = list(
+                                                                              list(
+                                                                                  visible = FALSE, targets = columns2hide
+                                                                              )
+                                                                          )
+                                                                          ),
+                                                           selection = list(mode = 'single',
+                                                                            target = 'cell'),
+                                        width = "100%", height = "100%"),
+                                    )
+                           )
+                capturaTorneo <<- noTabs
+            }
+            
+            updateTabItems(session = session, inputId = "torneo", selected = "Final" )
+        }
+        
+        output$mundialElegido <- renderText({
+            paste0("Mundial de ",input$eligeMundial,
+                   " jugado en ", infoElegido$Country)
+             
+        })
+        
+        output$imagenMundialElegido <- renderImage({
+            list(
+                src = paste0("www/",infoElegido$Country.Ab,".jpg"),
+                width = "auto",
+                height = "auto", deleteFile = FALSE
+            )
+        })
+        
+        
         
     })
     
@@ -313,7 +324,7 @@ shinyServer(function(input, output, session) {
                                      session$clientData$url_pathname,
                                      "?tab=infoXwc&",
                                      "wc=",salidaGeneral$Year,
-                                     "' target='_blank'>",
+                                     "' >",
                                      salidaGeneral$Year,"</a>")
         
         salidaGeneral %>% datatable( escape = FALSE, 
