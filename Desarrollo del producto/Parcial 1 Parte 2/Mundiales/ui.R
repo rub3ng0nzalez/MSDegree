@@ -36,17 +36,28 @@ body <- dashboardBody(
                     infoBoxOutput("maximoGanadorMundiales"),
                     infoBoxOutput("masAficionados")
                 ),
-                #imageOutput('prueba'),
                 dataTableOutput('datosGenerales')
         ),
-        
-        tabItem(tabName = "infoXteam",
-                h2("Statistics per national teams")
-        ),
+        tabItem(
+            tabName = "infoXteam",
+            h2("Estadisticas por selecciones nacionales"),
+            fluidRow(
+              box(title = "Búsqueda", width = 3, 
+                  solidHeader = TRUE, status = "primary",
+                  selectInput("pais", "Seleccione un Pais:",
+                              choices = NULL, selected = NULL)
+              ),
+              infoBoxOutput("ganados"),
+              infoBoxOutput("perdidos"),
+              infoBoxOutput("Empates"),
+              plotOutput("bar")
+              
+            
+        )),
         tabItem(tabName = "infoXwc",
                 h2("Estadísticas por copa mundial"),
                 fluidRow(
-                    box(title = "Busqueda", width = 4, 
+                    box(title = "Búsqueda", width = 4, 
                         solidHeader = TRUE, status = "primary",
                         selectInput("eligeMundial", "Seleccione un año de mundial:",
                                     choices = NULL, selected = NULL),

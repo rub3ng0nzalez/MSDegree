@@ -18,6 +18,7 @@ library(shiny)
 
 infoGeneral <- read.csv(file = 'Data/WorldCups.csv')
 infoMatches <- read.csv(file = 'Data/WorldCupMatches.csv')
+infoteam   <- read.csv(file = 'Data/WorldCup_resumen.csv')
 
 #----Creacion de tabla para matches
 salidaMatches <- infoMatches
@@ -74,18 +75,14 @@ salidaGeneral <- salidaGeneral %>% select(-c("Country.Ab","Winner.Ab","Second.Ab
 infoElegido<-NULL
 infoElegidoMatches <-NULL
 
+#----Creacion de tabla para datos por equipo
+infoteam   <- read.csv(file = 'Data/WorldCup_resumen.csv')
+#pie
+infopie   <- read.csv(file = 'Data/WorldCup_pie.csv')
+
 # Define server logic required to draw a histogram
 shinyServer(function(input, output, session) {
     
-    # output$prueba <- renderImage({
-    #     list(
-    #         src = "www/ARG.jpg",
-    #         alt = "Texto alterno"
-    #     )
-    # })
-    
-    
-
     
     #------------------------INI: Estadisticas por copa mundial ------------------------------------
     updateSelectInput(session = session,
@@ -311,7 +308,7 @@ shinyServer(function(input, output, session) {
                    mundialMaxAttendance$Year,
                    " en ", mundialMaxAttendance$Country), 
             icon = icon("user-friends", lib = "font-awesome"),
-            color = "lime", 
+            color = "olive", 
             fill = TRUE
         )
     })
@@ -332,6 +329,61 @@ shinyServer(function(input, output, session) {
                                      selection = list(mode = 'single',
                                                       target = 'cell'))
     })
+
+    #--------------------- team ---------------------------------------
+    updateSelectInput(session = session,
+                      inputId = 'pais',
+                      choices = infoteam$Country)
+    observeEvent(input$pais,{    
+        
+    infot <- infoteam %>% filter(infoteam$Country == input$pais)
+    
+    output$ganados <- renderInfoBox({
+        infoBox(
+            "Victorias", 
+            formatC(sum(infot$Ganados), format = "d", big.mark = "," ), 
+            icon = icon("medal"),
+            color = "green", 
+            fill = TRUE
+        )
+    })
+	
+    output$perdidos <- renderInfoBox({
+        infoBox(
+            "Derrotas", 
+            formatC(sum(infot$Perdidos), format = "d", big.mark = "," ), 
+            icon = icon("flag"),
+            color = "red", 
+            fill = TRUE
+        )
+    })
+	
+    output$Empates <- renderInfoBox({
+        infoBox(
+            "Empatados", 
+            formatC(sum(infot$Empates), format = "d", big.mark = "," ), 
+            icon = icon("futbol"),
+            color = "purple", 
+            fill = TRUE
+        )
+    })
+    
+
+    output$bar <- renderPlot( {
+        Reserve_Data <- infopie %>% filter(infopie$Country == input$pais)
+        
+        piepercent<- round(100*Reserve_Data$Value/sum(Reserve_Data$Value), 1)
+        
+        piepercent <- paste0(piepercent," %")
+        
+        pie(Reserve_Data$Value, labels = piepercent,
+            main = "Pie Chart of Team Game",
+            col = c("green","red","purple")) 
+            legend("topright", Reserve_Data$Attribute, cex = 1.4, fill = c("green","red","purple") )
+																	   
+    })   
+    })
+	
     
     #------------------------INI: Lectura de parametros ------------------------------------    
     observe({
@@ -341,16 +393,18 @@ shinyServer(function(input, output, session) {
         tabs <- query[["tab"]]
         
         wc <- query[["wc"]]
+        
+        team <- query[["team"]]
+        
         if(!is.null(tabs)){
             updateTabItems(session,"opciones",tabs)
             if (!is.null(wc)){
                 updateSelectInput(session,"eligeMundial",selected = wc)
             }
+            if (!is.null(team)){
+                updateSelectInput(session,"pais",selected = team)
+            }
         }
-        # if(!is.null(bar_col)){
-        #     updateSelectInput(session,"set_col",selected = bar_col)
-        # }
-        # browser()  <-----Para debuguear
     })
     
     #-----------------------FIN----------------------------------
