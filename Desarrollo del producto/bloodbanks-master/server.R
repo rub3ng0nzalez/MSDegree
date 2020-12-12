@@ -1,28 +1,12 @@
-
 library(shiny)
+
 library(dplyr)
-library(RMySQL)
-library(DT)
+
 library(leaflet)
-library(RColorBrewer)
-library(shinydashboard)
-library(shinythemes)
-library(lubridate)
 
-
+library(DT)
 
 shinyServer(function(input, output) {
-  
-  con <- dbConnect(MySQL(),user = 'usrmapa', password = 'prueba123', host ='db', port = 3306, dbname ='Mapamundi')
-  #infoTotal <- dbGetQuery(con,'select count(*) from casos_covid')
-  
-  #output$Texto <- renderText(paste0('cantidad lineas asdfasdf',infoTotal))
-  
-  
-  # output$datos <-renderDataTable({
-  #   
-  #   infoTotal %>% datatable(escape = FALSE, options = list(searching = FALSE))
-  # })
   # Import Data and clean it
   
   bb_data <- read.csv("data/blood-banks.csv", stringsAsFactors = FALSE )
@@ -47,14 +31,14 @@ shinyServer(function(input, output) {
                                           '<br><strong>Contact7:</strong> ',Contact.No.7,
                                           '<br><strong>Email:</strong> ',Email,
                                           '<br><strong>Website:</strong> ',Website)) 
-  
+
   # create a color paletter for category type in the data file
   
   pal <- colorFactor(pal = c("#1b9e77", "#d95f02", "#7570b3"), domain = c("Charity", "Government", "Private"))
-  
+   
   # create the leaflet map  
   output$bbmap <- renderLeaflet({
-    leaflet(bb_data) %>% 
+      leaflet(bb_data) %>% 
       addCircles(lng = ~Longitude, lat = ~Latitude) %>% 
       addTiles() %>%
       addCircleMarkers(data = bb_data, lat =  ~Latitude, lng =~Longitude, 
@@ -65,16 +49,17 @@ shinyServer(function(input, output) {
       addEasyButton(easyButton(
         icon="fa-crosshairs", title="ME",
         onClick=JS("function(btn, map){ map.locate({setView: true}); }")))
-  })
+        })
   
   #create a data object to display data
   
   output$data <-DT::renderDataTable(datatable(
-    bb_data[,c(-1,-23,-24,-25,-28:-35)],filter = 'top',
-    colnames = c("Blood Bank Name", "State", "District", "City", "Address", "Pincode","Contact No.",
-                 "Mobile","HelpLine","Fax","Email", "Website","Nodal Officer", "Contact of Nodal Officer",
-                 "Mobile of Nodal Officer", "Email of Nodal Officer","Qualification", "Category", "Blood Component Available",
-                 "Apheresis", "Service Time", "Lat", "Long.")
+      bb_data[,c(-1,-23,-24,-25,-28:-35)],filter = 'top',
+      colnames = c("Blood Bank Name", "State", "District", "City", "Address", "Pincode","Contact No.",
+                   "Mobile","HelpLine","Fax","Email", "Website","Nodal Officer", "Contact of Nodal Officer",
+                   "Mobile of Nodal Officer", "Email of Nodal Officer","Qualification", "Category", "Blood Component Available",
+                   "Apheresis", "Service Time", "Lat", "Long.")
   ))
 
+  
 })
