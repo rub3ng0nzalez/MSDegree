@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS casos_covid(
     Estado              VARCHAR(50),
     Latitud                 FLOAT,
     Longitud                FLOAT,
-    Fecha   			DATETIME, 
+    Fecha   			DATE,
 	Confirmados 		INT, 
 	Recuperados 		INT, 
 	Fallecidos 			INT

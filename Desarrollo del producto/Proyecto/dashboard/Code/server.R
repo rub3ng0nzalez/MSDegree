@@ -1,80 +1,118 @@
-
 library(shiny)
-library(dplyr)
-library(RMySQL)
-library(DT)
 library(leaflet)
-library(RColorBrewer)
-library(shinydashboard)
-library(shinythemes)
+library(dplyr)
 library(lubridate)
+library(DT)
+library(RMySQL)
+
+con <- dbConnect(MySQL(),user = 'usrmapa', password = 'prueba123', host ='db', port = 3306, dbname ='Mapamundi')
+datos_covid <- dbGetQuery(con,'select * from casos_covid')
+
+#datos_covid <- read.csv("Datos/casos_covid.csv", sep = ";", header = TRUE, encoding='latin-1')
+df_covid <- as.data.frame(datos_covid)
+df_covid <- na.omit(df_covid)
+#df_covid$Fallecidos  <- format(as.integer(df_covid$Fallecidos) , nsmall=0, big.mark=",")
 
 
+df_covid_fecha <- NULL
+max_confirmados<- max(as.integer(df_covid$Confirmados))
 
-shinyServer(function(input, output) {
-  
-  con <- dbConnect(MySQL(),user = 'usrmapa', password = 'prueba123', host ='db', port = 3306, dbname ='Mapamundi')
-  #infoTotal <- dbGetQuery(con,'select count(*) from casos_covid')
-  
-  #output$Texto <- renderText(paste0('cantidad lineas asdfasdf',infoTotal))
-  
-  
-  # output$datos <-renderDataTable({
-  #   
-  #   infoTotal %>% datatable(escape = FALSE, options = list(searching = FALSE))
-  # })
-  # Import Data and clean it
-  
-  bb_data <- read.csv("data/blood-banks.csv", stringsAsFactors = FALSE )
-  bb_data <- data.frame(bb_data)
-  bb_data$Latitude <-  as.numeric(bb_data$Latitude)
-  bb_data$Longitude <-  as.numeric(bb_data$Longitude)
-  bb_data=filter(bb_data, Latitude != "NA") # removing NA values
-  
-  # new column for the popup label
-  
-  bb_data <- mutate(bb_data, cntnt=paste0('<strong>Name: </strong>',Blood.Bank.Name,
-                                          '<br><strong>State:</strong> ', State,
-                                          '<br><strong>Time:</strong> ', Service.Time,
-                                          '<br><strong>Mobile:</strong> ',Mobile,
-                                          '<br><strong>HelpLine:</strong> ',Helpline,
-                                          '<br><strong>Contact1:</strong> ',Contact.No.1,
-                                          '<br><strong>Contact2:</strong> ',Contact.No.2,
-                                          '<br><strong>Contact3:</strong> ',Contact.No.3,
-                                          '<br><strong>Contact4:</strong> ',Contact.No.4,
-                                          '<br><strong>Contact5:</strong> ',Contact.No.5,
-                                          '<br><strong>Contact6:</strong> ',Contact.No.6,
-                                          '<br><strong>Contact7:</strong> ',Contact.No.7,
-                                          '<br><strong>Email:</strong> ',Email,
-                                          '<br><strong>Website:</strong> ',Website)) 
-  
-  # create a color paletter for category type in the data file
-  
-  pal <- colorFactor(pal = c("#1b9e77", "#d95f02", "#7570b3"), domain = c("Charity", "Government", "Private"))
-  
-  # create the leaflet map  
-  output$bbmap <- renderLeaflet({
-    leaflet(bb_data) %>% 
-      addCircles(lng = ~Longitude, lat = ~Latitude) %>% 
-      addTiles() %>%
-      addCircleMarkers(data = bb_data, lat =  ~Latitude, lng =~Longitude, 
-                       radius = 3, popup = ~as.character(cntnt), 
-                       color = ~pal(Category),
-                       stroke = FALSE, fillOpacity = 0.8)%>%
-      addLegend(pal=pal, values=bb_data$Category,opacity=1, na.label = "Not Available")%>%
-      addEasyButton(easyButton(
-        icon="fa-crosshairs", title="ME",
-        onClick=JS("function(btn, map){ map.locate({setView: true}); }")))
-  })
-  
-  #create a data object to display data
-  
-  output$data <-DT::renderDataTable(datatable(
-    bb_data[,c(-1,-23,-24,-25,-28:-35)],filter = 'top',
-    colnames = c("Blood Bank Name", "State", "District", "City", "Address", "Pincode","Contact No.",
-                 "Mobile","HelpLine","Fax","Email", "Website","Nodal Officer", "Contact of Nodal Officer",
-                 "Mobile of Nodal Officer", "Email of Nodal Officer","Qualification", "Category", "Blood Component Available",
-                 "Apheresis", "Service Time", "Lat", "Long.")
-  ))
-
+shinyServer(function(input, output, session) {
+    
+    filtro_data <- reactive({
+        
+        #fecha_filtro <- paste0(day(input$fecha_fil),'/',month(input$fecha_fil),'/',year(input$fecha_fil))
+        #fecha_filtro <- as.character(input$fecha_fil)
+        
+        
+        if(input$pais_fil == 'TODOS'){
+            datos_filtrados<- df_covid %>%
+                filter(Fecha == as.character(input$fecha_fil))
+            
+            return(datos_filtrados)
+        }
+        else
+        {
+            datos_filtrados<- df_covid %>%
+                filter(Fecha == as.character(input$fecha_fil), Pais == input$pais_fil)
+            
+            return(datos_filtrados)
+        }
+        
+        
+    })
+    
+    observe({
+        
+        leafletProxy("mapa", data = filtro_data()) %>% 
+            clearShapes()  %>%
+            #setView(lat = ~Latitud, lng = ~Longitud, zoom = 5) %>%
+            addCircles(lng = ~Longitud,
+                       lat = ~Latitud,
+                       radius = ~log(as.integer(Confirmados)) * 50000,
+                       weight = 1,
+                       opacity = 1,
+                       color = ~ifelse(Confirmados > 0, reds(Confirmados), NA),
+                       popup = ~paste(sep = "<br/>",
+                                      paste0("<b>Pais: </b>", Pais),
+                                      paste0("<b>Estado: </b>", Estado),
+                                      paste0("<b>Casos confirmados : </b>", format(Confirmados, nsmall=0, big.mark=",")),
+                                      paste0("<b>Recuperados : </b>", format(Recuperados, nsmall=0, big.mark=",")),
+                                      paste0("<b>Muertes : </b>", format(Fallecidos, nsmall=0, big.mark=","))
+                       )
+            )
+        
+    }) 
+    
+    data_fecha <- reactive({
+        
+        datos_cov<- df_covid %>%
+            filter(Fecha == as.character(input$fecha_fil))
+        
+        return(datos_cov)
+    })
+    
+    observe({
+        
+        pa<-factor(df_covid$Pais)
+        paises <-levels(pa)
+        tod <- c("TODOS")
+        t_paises <- cbind(paises,tod)
+        
+        updateSelectInput(session,"pais_fil",
+                          choices = t_paises,
+                          selected = "TODOS")
+    })
+    
+    observe({
+        
+        df_covid_fecha <<- data_fecha()
+        max_confirmados<<- max(as.integer(df_covid_fecha$Confirmados))
+        
+    })
+    
+    reds <- colorNumeric(c("green", "yellow", "orange", "red"), domain = range(0,max_confirmados))
+    
+    output$mapa <- renderLeaflet({
+        
+        leaflet(data_fecha(), options = leafletOptions(minZoom = 1, maxZoom = 18, worldCopyJump = T)) %>% 
+            setView(lat = 0, lng = 0, zoom = 4) %>%
+            addProviderTiles(providers$CartoDB.Positron,
+                             options = providerTileOptions(noWrap = TRUE)
+            ) %>%
+            fitBounds(lng1 = ~min(Longitud), 
+                      lat1 = ~min(Latitud), 
+                      lng2 = ~max(Longitud), 
+                      lat2 = ~max(Latitud)) %>%
+            addLegend("bottomleft", pal = reds, values = ~Confirmados,
+                      title = "Casos Confirmados",
+                      opacity = 1,
+                      bins = 6
+            )
+    })
+    
+    output$tabla_datos <- renderDataTable({
+        datatable(filtro_data())
+    })
+    
 })
