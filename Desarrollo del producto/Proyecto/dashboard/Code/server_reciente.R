@@ -3,9 +3,22 @@ library(leaflet)
 library(dplyr)
 library(lubridate)
 library(DT)
+library(RMySQL)
+library(ggplot2)
+library(scales)
+library(plotly)
 
 
-datos_covid <- read.csv("Datos/casos_covid.csv", sep = ";", header = TRUE, encoding='latin-1')
+con <- dbConnect(MySQL(),user = 'usrmapa', password = 'prueba123', host ='db', port = 3306, dbname ='Mapamundi')
+datos_covid <- dbGetQuery(con,'select * from casos_covid')
+
+query.tops <- 'select Pais, sum(Confirmados) as suma_Confirmados, sum(Recuperados) as suma_Recuperados, sum(Fallecidos) as suma_Fallecidos '
+query.tops <-paste0(query.tops,'from casos_covid group by Pais')
+
+datos_tops <- dbGetQuery(con,query.tops)
+
+
+#datos_covid <- read.csv("Datos/casos_covid.csv", sep = ";", header = TRUE, encoding='latin-1')
 df_covid <- as.data.frame(datos_covid)
 df_covid <- na.omit(df_covid)
 #df_covid$Fallecidos  <- format(as.integer(df_covid$Fallecidos) , nsmall=0, big.mark=",")
@@ -15,7 +28,20 @@ df_covid_fecha <- NULL
 max_confirmados<- max(as.integer(df_covid$Confirmados))
 
 shinyServer(function(input, output, session) {
-    
+  
+  RV <- reactiveValues(data = NULL)
+  nombresColumnas <-function(nombre) {
+    salida = ''
+    if(nombre == 'Cantidad de casos confirmados')
+      salida = RV$data$suma_Confirmados
+    else if (nombre == 'Cantidad de casos recuperados')
+      salida = RV$data$suma_Recuperados
+    else if (nombre == 'Cantidad de fallecidos')
+      salida = RV$data$suma_Fallecidos
+
+    return(salida)
+  }
+  
     filtro_data <- reactive({
         
         #fecha_filtro <- paste0(day(input$fecha_fil),'/',month(input$fecha_fil),'/',year(input$fecha_fil))
@@ -111,5 +137,32 @@ shinyServer(function(input, output, session) {
     output$tabla_datos <- renderDataTable({
         datatable(filtro_data())
     })
+    
+    
+    #------------------Tab de datos Top------------------------------------------
+    observeEvent(input$buscar, {
+      RV$data <- datos_tops
+      
+      if (input$masomenos =="BOTTOM")
+        RV$data <- RV$data %>% slice_min(nombresColumnas(input$indicador), n = as.numeric(input$cantidad))
+      else
+        RV$data <- RV$data %>% slice_max(nombresColumnas(input$indicador), n = as.numeric(input$cantidad))
+      
+      
+    })
+    
+    output$filtroTop <-renderDataTable({
+      #RV$data$suma_Confirmados <- RV$data$suma_Confirmados %>% formatC(format = "d", big.mark = "," )
+      #RV$data$suma_Recuperados <- RV$data$suma_Recuperados %>% formatC(format = "d", big.mark = "," )
+      #RV$data$suma_Fallecidos <- RV$data$suma_Fallecidos %>% formatC(format = "d", big.mark = "," )
+      RV$data %>% datatable(escape = FALSE, options = list(searching = FALSE, ordering = FALSE))
+    })
+    
+     output$bar <- renderPlot( {
+    #   graficos <- RV$data %>% select("suma_Confirmados")
+       
+       barplot(RV$data$suma_Confirmados)
+    
+    }) 
     
 })

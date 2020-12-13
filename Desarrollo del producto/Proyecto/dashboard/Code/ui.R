@@ -13,10 +13,13 @@ library(dashboardthemes)
 library(shinydashboard)
 library(DT)
 library(ggplot2)
-library(scales)
 library(plotly)
 
-datos_covid <- read.csv("Datos/casos_covid.csv", sep = ";", header = TRUE, encoding='latin-1')
+con2 <- dbConnect(MySQL(),user = 'usrmapa', password = 'prueba123', host ='db', port = 3306, dbname ='Mapamundi')
+datos_covid <- dbGetQuery(con2,'select * from casos_covid')
+
+#datos_covid <- read.csv("Datos/casos_covid.csv", sep = ";", header = TRUE, encoding='latin-1')
+
 df_covid <- as.data.frame(datos_covid)
 df_covid <- na.omit(df_covid)
 
@@ -46,7 +49,7 @@ shinyUI(
             ),
             
             tabItems(
-                # Primera tab de dashboard
+                #DASHBOARD CASOS
                 tabItem(
                     tabName = "dashboard",
                     
@@ -77,16 +80,37 @@ shinyUI(
                         )
                     ),
                     fluidRow(
-                        leafletOutput("mapa")
+                        #leafletOutput("mapa"),
+                        
+                        box(
+                            title = "Mapa", status = "primary",
+                            width = 8,
+                            leafletOutput("mapa"),
+                        ),
+                        box(title = "Indicadores",  status = "primary", width = 4,
+                            fluidRow(
+                                infoBoxOutput(width = 12, outputId = "filtro_p"),
+                                valueBoxOutput(width = 12, outputId = "casos_confirmados"),
+                                valueBoxOutput(width = 12, outputId = "casos_recuperados"),
+                                valueBoxOutput(width = 12, outputId = "casos_fallecidos")
+                            )
+                            
+                        )
                     ),
                     
                     h2("Tabla de datos"),
                     fluidRow(
                         dataTableOutput("tabla_datos")
+                    ),
+                    
+                    h2("Evolucion de casos a lo largo del tiempo"),
+                    fluidRow(
+                        plotlyOutput("plot_evolucion")
                     )
                     
                 ),
                 
+                #TOPS
                 tabItem(
                     tabName = 'tops',
                     selectInput("indicador",
@@ -110,8 +134,7 @@ shinyUI(
                     dataTableOutput('filtroTop')
                 ),
                 
-                
-                # Segunda tab de tabla de data sin filtrar
+                #ABOUT
                 tabItem(
                     tabName = "about",
                     

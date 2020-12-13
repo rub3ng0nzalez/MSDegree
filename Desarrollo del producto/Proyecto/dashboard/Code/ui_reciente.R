@@ -11,6 +11,10 @@ library(leaflet)
 library(shinythemes)
 library(dashboardthemes)
 library(shinydashboard)
+library(DT)
+library(ggplot2)
+library(scales)
+library(plotly)
 
 datos_covid <- read.csv("Datos/casos_covid.csv", sep = ";", header = TRUE, encoding='latin-1')
 df_covid <- as.data.frame(datos_covid)
@@ -32,6 +36,7 @@ shinyUI(
         dashboardSidebar(
             sidebarMenu(
                 menuItem("Mapa", tabName = "dashboard", icon = icon("map")),
+                menuItem("Tops", tabName = "tops", icon = icon("award", class = "font-awesome")),
                 menuItem("About", tabName = "about", icon = icon("info-circle"))
             )
         ), 
@@ -81,6 +86,30 @@ shinyUI(
                     )
                     
                 ),
+                
+                tabItem(
+                    tabName = 'tops',
+                    selectInput("indicador",
+                                h4("Selecciona un indicador"),
+                                choices = c("Cantidad de casos confirmados",
+                                            "Cantidad de casos recuperados","Cantidad de fallecidos")
+                    ),
+                    selectInput("masomenos",
+                                h4("Selecciona un tipo de filtro"),
+                                choices = c("TOP",
+                                            "BOTTOM")
+                    ),
+                    selectInput("cantidad",
+                                h4("Selecciona una cantidad"),
+                                choices = c("5",
+                                            "10","25","50","100")
+                    ),
+                    actionButton("buscar", label = "Buscar",
+                                 icon = icon("search", class = "font-awesome")),
+                    plotOutput("bar"),
+                    dataTableOutput('filtroTop')
+                ),
+                
                 
                 # Segunda tab de tabla de data sin filtrar
                 tabItem(

@@ -3,11 +3,10 @@ library(leaflet)
 library(dplyr)
 library(lubridate)
 library(DT)
-library(RMySQL)
 library(ggplot2)
 library(scales)
 library(plotly)
-
+library(RMySQL)
 
 con <- dbConnect(MySQL(),user = 'usrmapa', password = 'prueba123', host ='db', port = 3306, dbname ='Mapamundi')
 datos_covid <- dbGetQuery(con,'select * from casos_covid')
@@ -21,27 +20,14 @@ datos_tops <- dbGetQuery(con,query.tops)
 #datos_covid <- read.csv("Datos/casos_covid.csv", sep = ";", header = TRUE, encoding='latin-1')
 df_covid <- as.data.frame(datos_covid)
 df_covid <- na.omit(df_covid)
-#df_covid$Fallecidos  <- format(as.integer(df_covid$Fallecidos) , nsmall=0, big.mark=",")
 
 
 df_covid_fecha <- NULL
 max_confirmados<- max(as.integer(df_covid$Confirmados))
+total_confirmados_fecha <- sum(as.integer(df_covid$Confirmados))
 
 shinyServer(function(input, output, session) {
-  
-  RV <- reactiveValues(data = NULL)
-  nombresColumnas <-function(nombre) {
-    salida = ''
-    if(nombre == 'Cantidad de casos confirmados')
-      salida = RV$data$suma_Confirmados
-    else if (nombre == 'Cantidad de casos recuperados')
-      salida = RV$data$suma_Recuperados
-    else if (nombre == 'Cantidad de fallecidos')
-      salida = RV$data$suma_Fallecidos
-
-    return(salida)
-  }
-  
+    
     filtro_data <- reactive({
         
         #fecha_filtro <- paste0(day(input$fecha_fil),'/',month(input$fecha_fil),'/',year(input$fecha_fil))
@@ -64,6 +50,19 @@ shinyServer(function(input, output, session) {
         
         
     })
+    
+    RV <- reactiveValues(data = NULL)
+    nombresColumnas <-function(nombre) {
+        salida = ''
+        if(nombre == 'Cantidad de casos confirmados')
+            salida = RV$data$suma_Confirmados
+        else if (nombre == 'Cantidad de casos recuperados')
+            salida = RV$data$suma_Recuperados
+        else if (nombre == 'Cantidad de fallecidos')
+            salida = RV$data$suma_Fallecidos
+        
+        return(salida)
+    }
     
     observe({
         
@@ -111,6 +110,46 @@ shinyServer(function(input, output, session) {
         
         df_covid_fecha <<- data_fecha()
         max_confirmados<<- max(as.integer(df_covid_fecha$Confirmados))
+        total_confirmados_fecha <- sum(as.integer(df_covid_fecha$Confirmados))
+        
+    })
+    
+    vb_confirmados <- reactive({
+        
+        
+    })
+    
+    calc_datos_grafico <- reactive({
+        
+        if(input$pais_fil == 'TODOS'){
+            datos_filtrados<- df_covid %>%
+                group_by(Fecha) %>% 
+                summarize(Confirmados = sum(Confirmados, na.rm = TRUE),
+                          Recuperados = sum(Recuperados, na.rm = TRUE),
+                          Fallecidos = sum(Fallecidos, na.rm = TRUE)
+                          )
+            
+            datos_piv <- datos_filtrados %>%
+                pivot_longer(Confirmados:Fallecidos, names_to = "Casos", values_to = "Cantidad")
+            
+            return(datos_piv)
+        }
+        else
+        {
+            datos_filtrados<- df_covid %>%
+                filter(Pais == input$pais_fil) %>% 
+                group_by(Fecha) %>% 
+                summarize(Confirmados = sum(Confirmados, na.rm = TRUE),
+                          Recuperados = sum(Recuperados, na.rm = TRUE),
+                          Fallecidos = sum(Fallecidos, na.rm = TRUE)
+                )
+            
+            datos_piv <- datos_filtrados %>%
+                pivot_longer(Confirmados:Fallecidos, names_to = "Casos", values_to = "Cantidad")
+            
+            return(datos_piv)
+        }
+        
         
     })
     
@@ -134,35 +173,111 @@ shinyServer(function(input, output, session) {
             )
     })
     
+    output$casos_confirmados <- renderValueBox({
+        
+        vb_datos <- filtro_data()
+        valor <- format(sum(vb_datos$Confirmados), nsmall=0, big.mark=",")
+        
+        valueBox(
+            valor, 
+            "Confirmados",
+            icon("stats",lib='glyphicon'),
+            color = "red",
+            width = 12)
+        
+    })
+    
+    output$casos_recuperados <- renderValueBox({
+        
+        vb_datos <- filtro_data()
+        valor <- format(sum(vb_datos$Recuperados), nsmall=0, big.mark=",")
+        
+        valueBox(
+            valor, 
+            "Recuperados",
+            icon("stats",lib='glyphicon'),
+            color = "blue",
+            width = 12)
+        
+    })
+    
+    output$casos_fallecidos <- renderValueBox({
+        
+        vb_datos <- filtro_data()
+        valor <- format(sum(vb_datos$Fallecidos), nsmall=0, big.mark=",")
+        
+        valueBox(
+            valor, 
+            "Fallecidos",
+            icon("stats",lib='glyphicon'),
+            color = "purple",
+            width = 12)
+        
+    })
+    
+    output$filtro_p <- renderInfoBox({
+        
+        infoBox(input$pais_fil,
+                title = NULL,
+                width = 12
+        )
+    })
+    
+    output$plot_evolucion <- renderPlotly({
+        datos_grafico <- calc_datos_grafico()
+        
+        datos_grafico$Fecha <- as.Date(datos_grafico$Fecha, "%Y-%m-%d")
+        datos_grafico$Cantidad <- as.numeric(datos_grafico$Cantidad)
+        
+        casos_plot <- ggplot(datos_grafico, aes(Fecha, Cantidad)) + 
+            geom_line( aes(col = Casos), size = 1) + 
+            xlab("Fecha") + ylab("Numero de Casos") + 
+            scale_x_date(labels = date_format(format= "%b-%Y"),breaks = date_breaks("1 month")) +
+            scale_y_continuous(labels = comma)+
+            #scale_fill_manual(values=c("darkred","steelblue", "black"))+
+            scale_color_manual(values=c("darkred", "black", "steelblue")) +
+            theme_light()
+        
+        fig <- ggplotly(casos_plot)
+        
+        fig
+
+        
+    })
+    
     output$tabla_datos <- renderDataTable({
         datatable(filtro_data())
+        #datatable(calc_datos_grafico())
     })
     
     
     #------------------Tab de datos Top------------------------------------------
+    
     observeEvent(input$buscar, {
-      RV$data <- datos_tops
-      
-      if (input$masomenos =="BOTTOM")
-        RV$data <- RV$data %>% slice_min(nombresColumnas(input$indicador), n = as.numeric(input$cantidad))
-      else
-        RV$data <- RV$data %>% slice_max(nombresColumnas(input$indicador), n = as.numeric(input$cantidad))
-      
-      
+        RV$data <- datos_tops
+        
+        if (input$masomenos =="BOTTOM")
+            RV$data <- RV$data %>% slice_min(nombresColumnas(input$indicador), n = as.numeric(input$cantidad))
+        else
+            RV$data <- RV$data %>% slice_max(nombresColumnas(input$indicador), n = as.numeric(input$cantidad))
+        
+        
     })
     
     output$filtroTop <-renderDataTable({
-      #RV$data$suma_Confirmados <- RV$data$suma_Confirmados %>% formatC(format = "d", big.mark = "," )
-      #RV$data$suma_Recuperados <- RV$data$suma_Recuperados %>% formatC(format = "d", big.mark = "," )
-      #RV$data$suma_Fallecidos <- RV$data$suma_Fallecidos %>% formatC(format = "d", big.mark = "," )
-      RV$data %>% datatable(escape = FALSE, options = list(searching = FALSE, ordering = FALSE))
+        #RV$data$suma_Confirmados <- RV$data$suma_Confirmados %>% formatC(format = "d", big.mark = "," )
+        #RV$data$suma_Recuperados <- RV$data$suma_Recuperados %>% formatC(format = "d", big.mark = "," )
+        #RV$data$suma_Fallecidos <- RV$data$suma_Fallecidos %>% formatC(format = "d", big.mark = "," )
+        RV$data %>% datatable(escape = FALSE, options = list(searching = FALSE, ordering = FALSE))
     })
     
-     output$bar <- renderPlot( {
-    #   graficos <- RV$data %>% select("suma_Confirmados")
-       
-       barplot(RV$data$suma_Confirmados)
-    
+    output$bar <- renderPlot( {
+        #   graficos <- RV$data %>% select("suma_Confirmados")
+        
+        if(!is.null(RV$data$suma_Confirmados)){
+            barplot(RV$data$suma_Confirmados, col = rgb(0.2,0.4,0.6,0.6) )
+        }
+        
     }) 
     
 })
